@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+
+    <title>Todo List</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">To Do List!</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container my-4">
+        <h2 style = "background-color: aquamarine;"class="text-center">To Do List</h2>
+
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" aria-describedby="emailHelp">
+            <small id="emailHelp" class="form-text text-muted">Add an item to the list</small>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" rows="3"></textarea>
+        </div>
+        
+        <button id="add" style="margin-top: 15px;font-size: 25px;" class="btn btn-warning">Add to list</button>
+        <button id="clear" style="margin-top: 15px;font-size: 25px;" class="btn btn-warning">Clear Everything</button>
+
+        <div id="items" class="my-4">
+            <h2>Your Items</h2>
+            <table class="table" style="background-color:blanchedalmond">
+                <thead>
+                    <tr>
+                        <th scope="col">S.No.</th>
+                        <th scope="col">Item Title</th>
+                        <th scope="col">Item Description</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tablebody">
+
+                </tbody>
+            </table>
+        </div>
+        <div id="helo" class ="my-4">
+            <button id="about" style="margin-top: 215px;font-size: 25px;" class="btn btn-warning">About</button>
+            <button id="github" style="margin-top: 215px;font-size: 25px;float:right;" class="btn btn-warning">GITHUB</button>
+        </div>
+    </div>
+
+    <script>
+        yo = document.getElementById("add");
+        function doer() {
+            head = document.getElementById("title").value;
+            desc = document.getElementById("description").value;
+
+            if (localStorage.getItem("itemsjson") == null) {
+                itemsjsonArray = [];
+                itemsjsonArray.push([head, desc]);
+                localStorage.setItem('itemsjson', JSON.stringify(itemsjsonArray));
+            } else {
+                b = localStorage.getItem('itemsjson');
+                itemsjsonArray = JSON.parse(b);
+                itemsjsonArray.push([head, desc]);
+                localStorage.setItem('itemsjson', JSON.stringify(itemsjsonArray));
+            }
+
+            let tabl = document.getElementById("tablebody");
+            let str = "";
+
+            itemsjsonArray.forEach((element, index) => {
+                str += `
+                    <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${element[0]}</td>
+                    <td>${element[1]}</td>
+                    <td><button class="btn btn-primary" onclick = "del(${index})">Done</button></td>
+                  </tr>
+                    `;
+            });
+            tabl.innerHTML = str;
+        }
+
+        function initial() {
+            if (localStorage.getItem("itemsjson") != null) {
+                let b = localStorage.getItem('itemsjson');
+                let itemsjsonArray = JSON.parse(b);
+                let tabl = document.getElementById("tablebody");
+                let str = "";
+                itemsjsonArray.forEach((element, index) => {
+                    str += `
+                    <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${element[0]}</td>
+                    <td>${element[1]}</td>
+                    <td><button class="btn btn-primary" onclick = "del(${index})">Done</button></td>
+                  </tr>
+                    `;
+                });
+                tabl.innerHTML = str;
+            }
+        }
+        initial();
+        yo.addEventListener("click", doer);
+        let yo2 = document.getElementById("clear");
+        yo2.addEventListener("click",function(){
+            localStorage.clear();
+            let tabl = document.getElementById("tablebody");
+            tabl.innerHTML = "";
+        });
+
+        function del(i) {
+            itemsjsonArraystr = localStorage.getItem('itemsjson');
+            itemsjsonArray = JSON.parse(itemsjsonArraystr);
+            let str = "";
+            itemsjsonArray.splice(i, 1);
+            itemsjsonArray.forEach((element, index) => {
+                str += `
+                    <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${element[0]}</td>
+                    <td>${element[1]}</td>
+                    <td><button class="btn btn-primary" onclick = "del(${index})">Done</button></td>
+                  </tr>
+                    `;
+            });
+            let tabl = document.getElementById("tablebody");
+            tabl.innerHTML = str;
+            localStorage.setItem('itemsjson', JSON.stringify(itemsjsonArray));
+        }
+        let git = document.getElementById("github");
+        git.addEventListener("click",function(){
+            console.log("are yar");
+            window.location='https://github.com/shubh-vashisht';
+        });
+        let about = document.getElementById("about");
+        let ab = false;
+        about.addEventListener("click",function(){
+            if(ab){
+                return;
+            }
+            ab = true;
+            let t = document.getElementById("helo");
+            let child = document.createElement("p");
+            let str = `<h4 style = "margin-top: 15px;background:cyan;">This project is developed by Shubh Vashisht. This project was made with the help of HTML,
+            CSS and Javascript. In order to store the data, web browser local storage is used. In order to minimize use of local storage, data is first converted to string format.</h4>`
+            child.innerHTML = str;
+            t.appendChild(child);
+            
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
+
+   
+</body>
+
+</html>
